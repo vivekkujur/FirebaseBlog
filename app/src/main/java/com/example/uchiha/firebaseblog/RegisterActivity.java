@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -75,6 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
                             startActivity(intent);
 
 
+                        }else {
+                            Toast.makeText(RegisterActivity.this,"failed register", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

@@ -50,6 +50,18 @@ public class LoginActivity extends AppCompatActivity {
                 startlogin();
             }
         });
+
+
+        btn_reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent reg_intent= new Intent(LoginActivity.this,RegisterActivity.class) ;
+                reg_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(reg_intent);
+
+            }
+        });
     }
 
     private void startlogin() {

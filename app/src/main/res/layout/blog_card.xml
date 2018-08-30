@@ -13,13 +13,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/image_show"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="@android:color/transparent"
+            android:layout_height="200dp"
             android:scaleType="fitCenter"
          />
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/title_show"

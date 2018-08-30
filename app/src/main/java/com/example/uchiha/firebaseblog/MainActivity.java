@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
                     login_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(login_intent);
 
+                }else{
+
+                    checkUserExist();
                 }
             }
         };
@@ -65,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        mAuth.addAuthStateListener(authStateListener);
+
 
     }
 
@@ -72,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        checkUserExist();
 
       mAuth.addAuthStateListener(authStateListener);
+
         FirebaseRecyclerOptions<Blog> options =
                 new FirebaseRecyclerOptions.Builder<Blog>()
                         .setQuery(mref,Blog.class)
@@ -95,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull BlogViewHolder holder, int position, @NonNull Blog model) {
                 holder.setTitle(model.getTitle());
                 holder.setDesc(model.getDesc());
-                holder.setImage(model.getImage());
+                holder.setImage(model.getImage(), getApplicationContext());
 
 
 
@@ -111,7 +117,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkUserExist() {
 
-        final String user_id=mAuth.getCurrentUser().getUid();
+
+
+        final  String user_id= mAuth.getCurrentUser().getUid();
+
         mdatabaseuser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -148,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
             mView=itemView;
              post_desc =mView.findViewById(R.id.desc_show);
              post_title=mView.findViewById(R.id.title_show);
+            post_image = mView.findViewById(R.id.image_show);
+
         }
 
         public void setTitle(String title){
@@ -161,10 +172,9 @@ public class MainActivity extends AppCompatActivity {
             post_desc.setText(desc);
         }
 
-        public void setImage(String image){
-            post_image = (ImageView) mView.findViewById(R.id.image_show);
-             Picasso.get().load(image).into(post_image);
-         // Glide.with(ctx).load(image).into(post_image);
+        public void setImage(String image, Context ctx){
+             Picasso.with(ctx).load(image).into(post_image);
+             //Glide.with(ctx).load(image).into(post_image);
           // Picasso.get().load(image).into(post_image);
         }
     }

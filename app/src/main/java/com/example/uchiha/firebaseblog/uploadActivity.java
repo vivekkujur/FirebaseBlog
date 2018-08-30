@@ -13,8 +13,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,15 +34,19 @@ public class uploadActivity extends AppCompatActivity {
     private static final int GALLERY_REQUEST=1;
     Uri image_uri=null;
     private ProgressDialog progressDialog;
-
+    private  FirebaseStorage Storage;
     private StorageReference mStorageRef;
     private DatabaseReference database;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
-         mStorageRef = FirebaseStorage.getInstance().getReference();
+
+         Storage = FirebaseStorage.getInstance();
+         mStorageRef=Storage.getInstance().getReference();
          database = FirebaseDatabase.getInstance().getReference().child("Blog");
 
 
@@ -85,20 +92,24 @@ public class uploadActivity extends AppCompatActivity {
             progressDialog.setMessage("posting to blog...");
             progressDialog.show();
 
-            final StorageReference riversRef = mStorageRef.child("Blog_image").child(image_uri.getLastPathSegment());
+           // String img_name=image_uri.getLastPathSegment();
+             final StorageReference riversRef = mStorageRef.child("Blog_image/"+image_uri.getLastPathSegment()+".jpg");
+
+             UploadTask uploadTask=riversRef.putFile(image_uri);
 
 
-            riversRef.putFile(image_uri)
+           uploadTask
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Get a URL to the uploaded content
-                            String downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
 
+                       // String downloadUrl = taskSnapshot.getDownloadUrl().toString();
+                          String downloadUrl= taskSnapshot.getDownloadUrl().toString();
                             DatabaseReference newpost=database.push();
                             newpost.child("title").setValue(title);
                             newpost.child("desc").setValue(desc);
-                            newpost.child("image").setValue(downloadUrl);
+                          newpost.child("image").setValue(downloadUrl);
 
                             progressDialog.dismiss();
 
